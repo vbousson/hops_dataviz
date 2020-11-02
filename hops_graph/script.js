@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function(){
-  fetch('./data2.json')
+  fetch('/data_gen/graph.json')
     .then(resp => resp.json())
     .then(data => {
       console.log(JSON.stringify(data));
@@ -7,11 +7,15 @@ document.addEventListener('DOMContentLoaded', function(){
         container: document.getElementById('cy'),
         autounselectify: true,					
         boxSelectionEnabled: false,
-        layout: { name: 'cola' },
+        layout: { 
+          name: 'cola',
+          infinite: true
+        },
         style: [
           {
             selector: 'node',
-            css: {
+            style: {
+              'label': 'data(id)',
               'background-color': '#faf'
             }
           },
@@ -22,8 +26,9 @@ document.addEventListener('DOMContentLoaded', function(){
             }
           }
         ],
-        elements: data
+        elements: data,
+        zoomingEnabled: true
       });
     })
-    .catch(() => alert('oh no!'));
+    .catch(() => alert('oh no!'));    
 });

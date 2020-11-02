@@ -1,13 +1,13 @@
 import urllib.request
 from bs4 import BeautifulSoup
+import sys
+import json
 import IPython
 
 with urllib.request.urlopen("https://www.rolling-beers.fr/fr/content/29-liste-complete-des-houblons") as fp:
   soup = BeautifulSoup(fp.read().decode("utf8"), features="lxml")
 
 a = soup.find(id="listecomplete")
-
-import sys
 
 def parse_line_field(x):
   delim = " : "
@@ -71,6 +71,7 @@ for hop_name, hop in hops.items():
       print("Hop '{}' has link '{}' that doesn't exist.".format(hop_name, link))
       missing_hops |= { link }
 
+
 print("="*20)
 print("Known hops:")
 for x in list(sorted(hops.keys())):
@@ -82,41 +83,32 @@ for x in sorted(list(missing_hops)):
 print("="*20)
 print("\n")
 
-for hop_name, hop in hops.items():
-  for link in hop["links"]:
-      print("{} -> {}".format(hop_name,link))
 
-import networkx as nx
-import matplotlib.pyplot as plt
+#for hop_name, hop in hops.items():
+#    for link in hop["links"]:
+#      print("{} -> {}".format(hop_name,link))
 
 
-G = nx.from_
-nx.draw(G)
-plt.draw()
-
-plt.show()
-
-
-# libraries
-import pandas as pd
-import numpy as np
-import networkx as nx
-import matplotlib.pyplot as plt
-
-
-
-# Build a dataframe with your connections
-df = pd.DataFrame({ 'from':['A', 'B', 'C','A'], 'to':['D', 'A', 'E','C']}) 
-# And a data frame with characteristics for your nodes
-carac = pd.DataFrame({ 'ID':['A', 'B', 'C','D','E'], 'myvalue':['123','25','76','12','34'] })
-
-# Build your graph
-G=nx.from_pandas_dataframe(df, 'from', 'to', create_using=nx.Graph() ) 
-# The order of the node for networkX is the following order:
-G.nodes()
-# Thus, we cannot give directly the 'myvalue' column to netowrkX, we need to arrange the order!
-# Here is the tricky part: I need to reorder carac, to assign the good color to each node
-carac= carac.set_index('ID')
-carac=carac.reindex(G.nodes()) 
-# Plot it, providing a continuous color scale with cmap:
-nx.draw(G, with_labels=True, node_color=carac['myvalue'], cmap=plt.cm.Blues)
+data = {
+  "nodes": [
+    {
+      "data": {
+        "id": hop_name,
+        "label": hop_name
+      }
+    }
+    for hop_name, hop in hops.items()
+  ],
+  "edges": [
+    {
+      "data": {
+        "source": hop_name,
+        "target": link
+      }
+    }
+    for hop_name, hop in hops.items()
+    for link in hop["links"]
+  ]
+}
+with open('../hops_graph/graph.json', 'w') as jsonfile:
+  json.dump(data, jsonfile)
