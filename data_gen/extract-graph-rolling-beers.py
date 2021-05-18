@@ -4,7 +4,11 @@ import sys
 import json
 import IPython
 
-with urllib.request.urlopen("https://www.rolling-beers.fr/fr/content/29-liste-complete-des-houblons") as fp:
+headers = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+}
+
+with urllib.request.urlopen("https://www.rolling-beers.fr/fr/content/29-liste-complete-des-houblons", headers=headers) as fp:
   soup = BeautifulSoup(fp.read().decode("utf8"), features="lxml")
 
 a = soup.find(id="listecomplete")

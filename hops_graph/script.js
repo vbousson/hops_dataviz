@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function(){
-  fetch('/data_gen/graph.json')
+  fetch('/graph.json')
     .then(resp => resp.json())
     .then(data => {
       console.log(JSON.stringify(data));
